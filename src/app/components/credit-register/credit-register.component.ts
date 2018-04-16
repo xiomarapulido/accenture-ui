@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { CreditRequestService } from '../../services/credit-request.service';
+import { Client } from '../../models/client';
+import { Credit } from '../../models/credit';
 
 @Component({
   selector: 'app-credit-register',
@@ -13,6 +16,12 @@ export class CreditRegisterComponent implements OnInit {
   alertModel: number = 0;
   alertSucces: number = 0;
   alertMessage: string = '';
+  admissionDate: Date;
+  clients: Array<Client>;
+  client: Client;
+  credit: Credit;
+  idClient: string;
+  valueCredit:string;
 
   typeDocumentModel: number;
   numDocumentModel: number;
@@ -23,7 +32,7 @@ export class CreditRegisterComponent implements OnInit {
   nitModel: number;
   salaryModel: number;
 
-  constructor() { }
+  constructor(private creditRequestService: CreditRequestService) { }
 
   ngOnInit() {
     this.getTypeDocs();
@@ -34,7 +43,44 @@ export class CreditRegisterComponent implements OnInit {
 
   saved() {
     this.alertSucces = 0;
-    this.validateSaved()
+
+    if (this.validateSaved() == true) {
+
+      this.creditRequestService.getClient(this.typeDocumentModel, this.numDocumentModel)
+        .subscribe((res) => { this.client = res['data'][0]; });
+
+      this.admissionDate = new Date(this.yearModel, this.monthModel, this.dayModel);
+
+      this.idClient = this.client._id;
+
+      this.valueCredit = this.getValueCredit(this.salaryModel);
+
+      this.credit = {
+        clientId: this.idClient,
+        nameCompany: this.nameModel,
+        nitCompany: this.nitModel,
+        currentSalary: this.salaryModel,
+        admissionDate: this.admissionDate,
+        registerDate: new Date(),
+        state: 'Activo'
+      }
+
+      this.creditRequestService.addCredit(this.credit)
+        .subscribe((res) => { this.alertMessage = res['data']; });
+
+      this.alertSucces = 1;
+    }
+  }
+
+  getValueCredit(salary: number): string {
+    if (salary > 800000 && salary < 1000000) 
+    return '$5000000'
+
+    if (salary > 1000000&& salary < 4000000) 
+    return '$20000000'
+
+    if (salary > 4000000 && salary < 4000000) 
+    return '$50000000'
   }
 
   validateSaved() {
@@ -48,35 +94,38 @@ export class CreditRegisterComponent implements OnInit {
     else {
       if (!this.validateDate(this.yearModel, this.monthModel, this.dayModel)) {
         this.alertModel = 1;
-        this.alertMessage = 'No se puede aprobar un crédito si lleva menos de un año de trabjo en la empresa.';
+        this.alertMessage = 'No se puede aprobar un crédito si lleva menos de un año y medio de trabjo en la empresa.';
         return false
       }
 
+      this.creditRequestService.getClient(this.typeDocumentModel, this.numDocumentModel)
+        .subscribe((res) => { this.clients = res['data']; });
+
+      if (this.clients && this.clients.length <= 0) {
+        this.alertModel = 1;
+        this.alertMessage = `El cliente con el número de doumento ${this.numDocumentModel} no se encuentra registrado.`;
+        return false
+      }
+      if (this.salaryModel < 800000) {
+        this.alertModel = 1;
+        this.alertMessage = `Pasa solicitar un crédito su salario debe ser mayor a $800000.`;
+        return false
+
+      }
     }
-    // else {
-    //   if (!this.validateAge(this.yearModel, this.monthModel, this.dayModel)) {
-    //     this.alertModel = 1;
-    //     this.alertMessage = 'No se pueden registrar clientes menores de edad.';
-    //     return false
-    //   }
-
-    // this.creditRequestService.getClient(this.typeDocumentModel, this.numDocumentModel)
-    //   .subscribe((res) => { this.clients = res['data']; });
-
-    // if (this.clients && this.clients.length > 0) {
-    //   this.alertModel = 1;
-    //   this.alertMessage = `Existe un cliente registrado con el número de documento ${this.numDocumentModel}`;
-    //   return false
-    // }
-
-    // }
     return true;
   }
 
   validateDate(year: number, mounth: number, day: number): Boolean {
     var today = new Date();
-      
-    return false;
+    this.admissionDate = new Date(this.yearModel, this.monthModel, this.dayModel);
+
+    var diasDif = today.getTime() - this.admissionDate.getTime();
+    var dias = Math.round(diasDif / (1000 * 60 * 60 * 24));
+    if (dias < 547) {
+      return false
+    }
+    return true;
   }
 
   validateModel(): Boolean {

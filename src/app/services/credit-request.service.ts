@@ -6,12 +6,14 @@ import { Subject } from 'rxjs/Subject';
 
 import { environment as ENV } from '../../environments/environment';
 import { Client } from '../models/client';
+import { Credit } from '../models/credit';
 
 
 @Injectable()
 export class CreditRequestService {
 
   public servicesClientURL = `${ENV.route_api}/client`;
+  public servicesCreditURL = `${ENV.route_api}/credit`;
 
   constructor(private http: HttpClient) { }
 
@@ -27,6 +29,12 @@ export class CreditRequestService {
     let url = `${this.servicesClientURL}`;
 
     return this.http.post(url, client);
+  }
+
+  public addCredit(credit:Credit){
+    let url = `${this.servicesCreditURL}`;
+
+    return this.http.post(url, credit);
   }
 
 }

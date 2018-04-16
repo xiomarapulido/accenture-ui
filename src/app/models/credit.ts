@@ -1,5 +1,5 @@
 export interface Credit {
-    id: number,
+    id?: number,
     clientId: string,
     nameCompany: string,
     nitCompany: number,

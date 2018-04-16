@@ -75,15 +75,6 @@ export class ClientRegisterComponent implements OnInit {
         return false
       }
 
-      this.creditRequestService.getClient(this.typeDocumentModel, this.numDocumentModel)
-        .subscribe((res) => { this.clients = res['data']; });
-
-      // if (this.clients && this.clients.length > 0) {
-      //   this.alertModel = 1;
-      //   this.alertMessage = `Existe un cliente registrado con el número de documento ${this.numDocumentModel}`;
-      //   return false
-      // }
-
     }
     return true;
   }
