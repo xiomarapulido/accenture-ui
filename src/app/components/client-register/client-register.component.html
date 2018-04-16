@@ -1,0 +1,69 @@
+<div class="centered-form">
+  <div class="panel panel-default top">
+    <div class="panel-heading">
+      <h4 class="panel-title color-title text-center">
+        Registro de clientes
+      </h4>
+    </div>
+    <div class="panel-body">
+
+      <div class="col-md-12 top">
+        <div class="col-md-4 float-left">
+          <label class="color-title" for="tipoDoc">Tipo de documento:</label>
+          <select class="form-control" [(ngModel)]="typeDocumentModel" id="tipoDoc">
+            <option *ngFor="let typeDocument of typeDocument" value="{{typeDocument.id}}">{{typeDocument.name}}</option>
+          </select>
+        </div>
+
+        <div class="col-md-4 float-left">
+          <label class="color-title" for="numDoc">Número de documento:</label>
+          <div class="form-group">
+            <input type="number" [(ngModel)]="numDocumentModel" min="0" class="form-control currency" id="numDoc" />
+          </div>
+        </div>
+        <div class="col-md-4 float-left">
+          <div class="col-12 color-title"> Fecha de nacimiento</div>
+          <div class="form-group float-left col-4">
+            <select class="form-control" [(ngModel)]="dayModel" title="Día" id="day">
+              <option *ngFor="let day of day" value="{{day.value}}">{{day.value}}</option>
+            </select>
+          </div>
+
+          <div class="form-group float-left col-4">
+            <select class="form-control" title="Mes" [(ngModel)]="monthModel" id="month">
+              <option *ngFor="let month of month" value="{{month.id}}">{{month.name}}</option>
+            </select>
+          </div>
+          <div class="form-group float-left col-4">
+            <select class="form-control" title="Año" [(ngModel)]="yearModel" id="year">
+              <option *ngFor="let year of year" value="{{year.value}}">{{year.value}}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12">
+        <div class="col-md-6 float-left">
+          <label class="color-title" for="name">Nombres:</label>
+          <div class="form-group">
+            <input type="text" name="name" id="name" class="form-control input-sm" [(ngModel)]="nameModel">
+          </div>
+        </div>
+        <div class="col-md-6 float-left">
+          <label class="color-title" for="apellido">Apellidos:</label>
+          <div class="form-group">
+            <input type="text" name="last_name" id="lastName" class="form-control input-sm" [(ngModel)]="lastNameModel">
+          </div>
+        </div>
+      </div>
+      <input type="submit" value="Enviar" class="btn btn-info btn-block" (click)="saved()">
+
+    </div>
+
+  </div>
+
+  <div class="alert alert-danger top" *ngIf="alertModel == 1" role="alert">
+    {{alertMessage}}
+  </div>
+  <div class="alert alert-success" *ngIf="alertSucces == 1" role="alert">
+    {{alertMessage}}
+  </div>
